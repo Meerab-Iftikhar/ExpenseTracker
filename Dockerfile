@@ -7,4 +7,4 @@ RUN npm install
 COPY . .
 
 # React / Vite app ke liye
-CMD ["npm", "run", "dev"]   # ya "start" agar package.json me defined hai
+CMD ["npm", "run", "preview", "--", "--host", "0.0.0.0", "--port", "3000"]
