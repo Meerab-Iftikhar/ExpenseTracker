@@ -1,8 +1,11 @@
 version: "3.8"
-
 services:
-  web:
-    build: .
-    container_name: react-firebase-app
+  webapp:
+    image: node:18  # or your app’s base image
+    container_name: webapp_container
     ports:
-      - "80:80"
+      - "8081:3000"  # change port to avoid conflicts
+    volumes:
+      - ./app:/usr/src/app  # mount your code
+    working_dir: /usr/src/app
+    command: npm start
