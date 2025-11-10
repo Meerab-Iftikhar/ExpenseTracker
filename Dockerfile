@@ -1,23 +1,31 @@
-# Base image
-FROM node:20
+# Step 1: Build the React/Vite app
+FROM node:20 AS build
 
-# Set working directory
 WORKDIR /usr/src/app
 
-# Copy package files
+# Copy package files and install dependencies
 COPY package*.json ./
-
-# Install dependencies
 RUN npm install
 
-# Copy all source code
+# Copy all source files
 COPY . .
 
-# Build the app
+# Build the production version
 RUN npm run build
 
-# Install serve globally to serve static files
+# Step 2: Serve the build using a lightweight server
+FROM node:20-slim
+
+WORKDIR /usr/src/app
+
+# Install serve globally
 RUN npm install -g serve
 
-# Run the app on port 8081
+# Copy built files from previous stage
+COPY --from=build /usr/src/app/dist ./dist
+
+# Expose port
+EXPOSE 8081
+
+# Command to run the app
 CMD ["serve", "-s", "dist", "-l", "8081"]
