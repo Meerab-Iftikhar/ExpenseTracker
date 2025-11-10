@@ -1,16 +1,15 @@
-FROM node:20
-WORKDIR /app
-
+# Build stage
+FROM node:20 AS builder
+WORKDIR /usr/src/app
 COPY package*.json ./
-
-# Force install stable version
-RUN npm install react-router-dom@6
-
 RUN npm install
-
 COPY . .
-
 RUN npm run build
 
+# Production stage
+FROM node:20
+WORKDIR /usr/src/app
+RUN npm install -g serve
+COPY --from=builder /usr/src/app/dist ./dist
 EXPOSE 8081
-CMD ["npm","run","preview", "--", "--port", "8081", "--host"]
+CMD ["serve", "-s", "dist", "-l", "8081"]
