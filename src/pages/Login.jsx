@@ -1,3 +1,4 @@
+// src/pages/Login.jsx
 import { useState } from "react";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../firebase";
@@ -13,7 +14,7 @@ export default function Login() {
     e.preventDefault();
     try {
       await signInWithEmailAndPassword(auth, email, password);
-      navigate("/");
+      navigate("/dashboard");
     } catch (err) {
       setError(err.message);
     }
@@ -22,13 +23,13 @@ export default function Login() {
   return (
     <div className="auth-container">
       <h1>Login</h1>
-      {error && <p className="error">{error}</p>}
+      {error && <p className="error" id="login-error">{error}</p>}
       <form onSubmit={handleLogin}>
-        <input type="email" placeholder="Email"
+        <input id="email" type="email" placeholder="Email"
                value={email} onChange={e => setEmail(e.target.value)} />
-        <input type="password" placeholder="Password"
+        <input id="password" type="password" placeholder="Password"
                value={password} onChange={e => setPassword(e.target.value)} />
-        <button type="submit">Login</button>
+        <button id="login-btn" type="submit">Login</button>
       </form>
       <p>No account? <Link to="/signup">Sign up</Link></p>
     </div>

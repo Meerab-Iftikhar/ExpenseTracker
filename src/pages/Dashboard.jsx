@@ -1,3 +1,4 @@
+// src/pages/Dashboard.jsx
 import { useEffect, useState } from "react";
 import {
   collection,
@@ -88,31 +89,36 @@ export default function Dashboard() {
   };
 
   // 🔹 Budget and total calculations
-  const totalSpent = expenses.reduce((acc, e) => acc + e.amount, 0);
+  const totalSpent = expenses.reduce((acc, e) => acc + (e.amount || 0), 0);
   const remaining = budget - totalSpent;
 
   // 🔹 Logout
   const handleLogout = async () => {
-    await signOut(auth);
-    navigate("/login");
-  };
+  await signOut(auth);
+  localStorage.clear();
+  sessionStorage.clear();
+
+  // Force redirect instantly
+  window.location.href = "/login";
+};
+
 
   return (
     <div className="dash-container">
       {/* 🔸 Profile Section */}
       <div className="profile-section">
         <div className="profile-info">
-          <h2>Welcome, {user?.email}</h2>
+          <h2>Welcome, {user?.email || "Guest"}</h2>
           <p>Your personal budget tracker 💰</p>
         </div>
-        <button className="logout-btn" onClick={handleLogout}>Logout</button>
+        <button id="logout-btn" className="logout-btn" onClick={handleLogout}>Logout</button>
       </div>
 
       <h1>💸 Expense & Budget Tracker</h1>
 
-      {/* 🔸 Buttons */}
+      {/* 🔸 Buttons */} 
       <div className="top-bar">
-        <button
+        <button id="budget-btn"
           onClick={() => {
             const val = parseFloat(prompt("Enter your total monthly budget:"));
             if (!isNaN(val)) setBudget(val);
@@ -120,7 +126,7 @@ export default function Dashboard() {
         >
           Set / Update Budget
         </button>
-        <Link to="/reports"><button>📊 View Reports</button></Link>
+        <Link to="/reports"><button id="reports-btn">📊 View Reports</button></Link>
       </div>
 
       {/* 🔸 Budget summary */}
@@ -133,32 +139,35 @@ export default function Dashboard() {
       {/* 🔸 Add Expense Form */}
       <form onSubmit={addExpense} className="expense-form">
         <input
+          id="title"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
           placeholder="Expense title"
         />
         <input
+          id="amount"
           value={amount}
           onChange={(e) => setAmount(e.target.value)}
           type="number"
           placeholder="Amount"
         />
-        <select value={category} onChange={(e) => setCategory(e.target.value)}>
+        <select id="category" value={category} onChange={(e) => setCategory(e.target.value)}>
           {CATEGORIES.map((c) => (
-            <option key={c}>{c}</option>
+            <option key={c} value={c}>{c}</option>
           ))}
         </select>
         <input
+          id="date"
           type="date"
           value={date}
           onChange={(e) => setDate(e.target.value)}
         />
-        <button type="submit">Add Expense</button>
+        <button id="save-btn" type="submit">Add Expense</button>
       </form>
 
       {/* 🔸 Expense List */}
       <h2>Recent Expenses</h2>
-      <ul className="expense-list">
+      <ul className="expense-list" id="expense-list">
         {expenses.map((e) => (
           <li key={e.id} className="expense-item">
             <div>
