@@ -1,3 +1,4 @@
+
 # Step 1: Build the React/Vite app
 FROM node:20 AS build
 WORKDIR /usr/src/app
